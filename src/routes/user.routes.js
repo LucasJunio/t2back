@@ -20,8 +20,7 @@ function is_email(email){
 }
 
 // General query 
-router.get("/", async (req, res) => {
-    
+router.get("/", async (req, res) => {    
     const user = await User.find()
 	res.json(user)
 });
