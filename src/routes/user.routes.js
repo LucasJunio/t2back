@@ -1,9 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-const authConfig = require('../config/auth')
 
 const User = require('../models/user');
 
@@ -25,61 +21,35 @@ router.get("/", async (req, res) => {
 	res.json(user)
 });
 
-
-// Router validation of user and password form
-router.post('/', async (req, res) => {
-
-	const { email, password } = req.body;
-
-	const user = await User.findOne({ email }).select("+password");
-
-	if(!user) {
-		return res.status(400).send({ error: 'User not found'})
-	}
-
-	if(!await bcrypt.compare(password, user.password))
-		return res.status(400).send({error: 'Invalid password'});
-	
-	user.password = undefined;
-
-	const token = jwt.sign({ id: user.id }, authConfig.secret, {
-		expiresIn: 86400,
-	})
-
-	res.send({user, token})
-
-});
-
 // User create
 router.post('/add', async (req, res) => {
 
 	if(req.body.name == null) {
-		res.json({status:'Preencha o campo nome.'});
-		return
+		return res.status(400).send({error: 'fill in the name field'});
 	}
 
 	if(req.body.password == null) {
-		res.json({status:'Preencha o campo senha.'});
-		return
+		return res.status(400).send({error: 'fill in the password field'});
 	}
 
 	if(!is_email(req.body.email)) {
-		res.json({status:'E-mail inválido.'});
-		return
+		return res.status(400).send({error: 'Email invalid'});
 	} 
 
 	const email = await User.findOne({email: req.body.email});    
 
 	if(email !== null) {
-		res.json({status:'E-mail já está em uso.'});
-		return
+		return res.status(400).send({error: 'Email in use'});
     } 
 
 	const name = await User.findOne({name: req.body.name});
 
 	if(name !== null) {
-		res.json({status:'Nome de usuário já cadastrado.'});
-		return
+		return res.status(400).send({error: 'username already registered'});
+	}
+
+	if(req.body.type === undefined) {
+		return res.status(400).send({error: 'Invalid type'});
 	}
 
 	let newUser = new User({
@@ -91,10 +61,10 @@ router.post('/add', async (req, res) => {
 
 	User.createUser(newUser, (err, savedUser) => {
 		if(err){
-			return res.send({ success: false, status: 'Ocorreu algum erro ao cadastrar usuário.' });
+			return res.status(400).send({error: 'There was an error registering user'});
 		}
 		else {
-			return res.send({ success: true, status: 'Usuário registrado!' });
+			return res.status(200).send({succes: 'Registered user'});
 		}
 	});
 })

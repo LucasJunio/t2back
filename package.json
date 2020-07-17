@@ -27,7 +27,9 @@
     "mongoose": "^5.9.20",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.4",
     "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

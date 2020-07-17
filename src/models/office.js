@@ -8,7 +8,8 @@ const OfficeSchema = new Schema({
         unique: true,
         lowercase: true
         // Tornar insensitivo à acentuação
-     }
+    },
+    sector: {type: Number, require: true}
 });
 
 module.exports = mongoose.model('Office', OfficeSchema);

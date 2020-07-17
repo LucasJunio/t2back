@@ -17,32 +17,19 @@ router.get('/:id', async (req, res)=> {
 // Creating of skill
 router.post('/add', async (req, res) => {
 
-    const {name, category, segment} = req.body; 
+    const {name, description} = req.body; 
 
     const ski = await Skill.findOne({name: name});
 
     if(ski) {
-        res.json({status: 'Não é possível adicionar competência, pois há registro com o mesmo nome.'})
-        return
+        return res.status(400).send({error: 'It is not possible to add competence, as there is a record with the same name.'});
     }
 
     const skill = new Skill({
-        name, category, segment
+        name, description
     })
     await skill.save();
-    res.json({status:'Competência salva!'});
-})
-
-// Updating of skill
-router.put('/:id', async (req, res) => {
-
-    res.json({status:'Competência atualizada!'});    
-})
-
-// Deleting of skill
-router.delete('/:id', async (req, res) => {
-
-    res.json({ status: 'Competência excluída!'});
+    return res.status(200).send({succes: 'Registered skill'});
 })
 
 module.exports = router; 

@@ -9,9 +9,7 @@ const SkillSchema = new Schema({
         lowercase: true
         // Tornar insensitivo à acentuação
     },
-    category: { type: String, require: true },
-    segment: { type: String, require: true },
-
+    description: { type: String, require: true }
 });
 
 module.exports = mongoose.model('Skill', SkillSchema);

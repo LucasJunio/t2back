@@ -5,7 +5,7 @@ const Office = require('../models/office');
 // General query of office
 router.get('/', async (req, res) => {
 	const office = await Office.find();
-    res.json(office)
+    res.json('offices')
 })
 
 // Office query for ID
@@ -17,20 +17,19 @@ router.get('/:id', async (req, res)=> {
 // Creating of office
 router.post('/add', async (req, res) => {
 
-    const {name} = req.body; 
+    const {name, sector} = req.body; 
 
     const off = await Office.findOne({name: name});
 
     if(off) {
-        res.json({status: 'Não é possível adicionar cargo, pois há registro com o mesmo nome.'})
-        return
+        return res.status(400).send({error: 'It is not possible to add office, as there is a record with the same name.'});
     }
 
     const office = new Office({
-        name
+        name, sector
     })
     await office.save();
-    res.json({status:'Cargo salvo!'});
+    return res.status(200).send({succes: 'Registered office'});
 })
 
 // Updating of office
