@@ -11,7 +11,6 @@ const ConquestSchema = new Schema({
      },
     type: { type: Number, require: true },
     punctuation: { type: Number, require: true },
-
 });
 
 module.exports = mongoose.model('Conquest', ConquestSchema);

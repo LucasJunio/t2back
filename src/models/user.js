@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, require: true, unique: true, select: false },
     email: {type: String, require: true, unique: true},
     type: { type: Number, require: true },
+    company: { type: String },
+	office: { type: String },
+	gender: { type: Number },
+	birth: {type: Date }
 });
 
 UserSchema.plugin(uniqueValidator);

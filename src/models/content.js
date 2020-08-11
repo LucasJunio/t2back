@@ -10,11 +10,11 @@ const ContentSchema = new Schema({
         lowercase: true
         // Tornar insensitivo à acentuação
     },
-    category: { type: String, require: true },
+    type: { type: Number, require: true },
     description: { type: String, require: true },
-    competency: { type: String, require: true },
     note: { type: String },
-    image : [Imagem.schema]
+    image: [Imagem.schema],
+    status: { type: Number, require: true }
 });
 
 module.exports = mongoose.model('Content', ContentSchema);
