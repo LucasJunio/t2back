@@ -27,8 +27,19 @@ router.post('/add', async (req, res) => {
 })
 
 
+// Geral query company
+router.get('/', async (req, res)=> {
+    const company = await Company.find();
+
+    if(company == null) {
+        return res.status(400).send({error: 'Company not found'});
+    }
+
+    res.status(200).send(company);
+})
+
 // Company query for ID
-router.get('/:id', async (req, res)=> {
+router.get('/:_id', async (req, res)=> {
     const company = await Company.findById(req.params._id );
 
     if(company == null) {
@@ -39,7 +50,7 @@ router.get('/:id', async (req, res)=> {
 })
 
 // Updating of company
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const company = await Company.findById(req.params._id );
 
@@ -53,21 +64,22 @@ router.put('/:id', async (req, res) => {
         return res.status(400).send({ error: 'Some blank attribute'})
     }   
 
-    const validation = await Company.findOne({name: name});    
+    //  CORRIGIR ESSA VALIDAÇÃO PARA EVITAR DUPLICAÇÃO
+    const validation = await Company.find({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'Company with the same name already exists'});
     }
 
     const newCompany = { name, state_registration, cpf, cnpj, moderation, user, adress, segment };
 
-    await Company.findByIdAndUpdate(req.params.id, newCompany);    
+    await Company.findByIdAndUpdate(req.params._id, newCompany);    
 
     res.status(200).send({status:'Updated company'});
 })
 
 // Deleting of company
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const company = await Company.findById(req.params._id);
 
@@ -75,19 +87,13 @@ router.delete('/:id', async (req, res) => {
         return res.status(400).send({error: 'Company not found'});
     }
 
-    const companyaudience = await CompanyAudience.findOne({ company: req.params._id });
+    const companyaudience = await CompanyAudience.findOne({ company: req.params.name });
 
     if(companyaudience !== null) {
         return res.status(400).send({error: 'You cannot delete a company because there is a companyaudience using it'});
     }
-
-    const contact = await Contact.findOne({ company: req.params._id });
-
-    if(contact !== null) {
-        return res.status(400).send({error: 'You cannot delete a company because there is a contact using it'});
-    }
-
-    const companytype = await CompanyType.findOne({ company: req.params._id });
+   
+    const companytype = await CompanyType.findOne({ company: req.params.name });
 
     if(companytype !== null) {
         return res.status(400).send({error: 'You cannot delete a company because there is a companytype using it'});

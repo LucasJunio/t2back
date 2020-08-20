@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Interest = require('../models/interest');
+const UserInterest = require('../models/userinterest');
 
 // Creating of interest
 router.post('/add', async (req, res) => {
@@ -25,8 +26,19 @@ router.post('/add', async (req, res) => {
 })
 
 
+// Geral query of interest
+router.get('/', async (req, res)=> {
+    const interest = await Interest.find();
+
+    if(interest == null) {
+        return res.status(400).send({error: 'Interest not found'});
+    }
+
+    res.status(200).send(interest);
+})
+
 // Interest query for ID
-router.get('/:id', async (req, res)=> {
+router.get('/:_id', async (req, res)=> {
     const interest = await Interest.findById(req.params._id );
 
     if(interest == null) {
@@ -37,7 +49,7 @@ router.get('/:id', async (req, res)=> {
 })
 
 // Updating of interest
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const interest = await Interest.findById(req.params._id );
 
@@ -53,19 +65,19 @@ router.put('/:id', async (req, res) => {
 
     const validation = await Interest.findOne({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'Interest with the same name already exists'});
     }
 
     const newInterest = { name };
 
-    await Interest.findByIdAndUpdate(req.params.id, newInterest);    
+    await Interest.findByIdAndUpdate(req.params._id, newInterest);    
 
     res.status(200).send({status:'Updated interest'});
 })
 
 // Deleting of interest
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const interest = await Interest.findById(req.params._id);
 

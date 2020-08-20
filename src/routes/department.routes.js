@@ -38,15 +38,21 @@ router.get('/', async (req, res) => {
     res.status(200).send(department);
 })
 
-// Geral department query
-router.get('/', async (req, res)=> {
+// Foreign query of department
+router.get('/foreign', async (req, res) => {
     const department = await Department.find();
-    
+
     if(department == null) {
         return res.status(400).send({error: 'Department not found'});
     }
 
-    res.status(200).send(department);
+    let foreign = []
+
+    for(var i = 0; i < department.length ; i++){          
+        foreign.push(department[i].name)
+    }     
+
+    res.status(200).send(foreign);
 })
 
 // Department query for ID
@@ -77,20 +83,20 @@ router.put('/:_id', async (req, res) => {
     
     const validation = await Department.findOne({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'Department with the same name already exists'});
     } 
 
     const newDepartment = { name };
 
-    await Department.findByIdAndUpdate(req.params.id, newDepartment);    
+    await Department.findByIdAndUpdate(req.params._id, newDepartment);    
 
     res.status(200).send({status:'Updated department'});
 
 })
 
 // Deleting of department
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const department = await Department.findById(req.params._id );
 

@@ -26,8 +26,36 @@ router.post('/add', async (req, res) => {
 })
 
 
+// Geral query of segment
+router.get('/', async (req, res)=> {
+    const segment = await Segment.find();
+
+    if(segment == null) {
+        return res.status(400).send({error: 'Segment not found'});
+    }
+
+    res.status(200).send(segment);
+})
+
+// Foreign query of segment
+router.get('/foreign', async (req, res) => {
+    const segment = await Segment.find();
+
+    if(segment == null) {
+        return res.status(400).send({error: 'Segment not found'});
+    }
+
+    let foreign = []
+
+    for(var i = 0; i < segment.length ; i++){          
+        foreign.push(segment[i].name)
+    }     
+
+    res.status(200).send(foreign);
+})
+
 // Segment query for ID
-router.get('/:id', async (req, res)=> {
+router.get('/:_id', async (req, res)=> {
     const segment = await Segment.findById(req.params._id );
 
     if(segment == null) {
@@ -38,7 +66,7 @@ router.get('/:id', async (req, res)=> {
 })
 
 // Updating of segment
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const segment = await Segment.findById(req.params._id );
 
@@ -54,19 +82,19 @@ router.put('/:id', async (req, res) => {
 
     const validation = await Segment.findOne({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'Segment with the same name already exists'});
     }
 
     const newSegment = { name };
 
-    await Segment.findByIdAndUpdate(req.params.id, newSegment);    
+    await Segment.findByIdAndUpdate(req.params._id, newSegment);    
 
     res.status(200).send({status:'Updated segment'});
 })
 
 // Deleting of segment
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const segment = await Segment.findById(req.params._id);
 

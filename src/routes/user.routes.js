@@ -11,7 +11,6 @@ const UserConquest = require('../models/userconquest');
 // User create
 router.post('/add', async (req, res) => {
 
-
 	const { name, password, email, type, company, office, gender, birth } = req.body;
 
 	if(name == '' || password == '' || email == '' || type == undefined) {
@@ -23,31 +22,46 @@ router.post('/add', async (req, res) => {
 	if(validation !== null) {
 		return res.status(400).send({error: 'Email in use'});
     } 
-
 	
 	let newUser = new User({ name, password, email, type, company, office, gender, birth });
 
 	User.createUser(newUser, (err, savedUser) => {
 		if(err){
-			return res.status(400).send({error: 'There was an error registering user'});
-		}
+			res.status(400).send({error: 'There was an error registering user'});
+		} 
 		else {
-			return res.status(200).send({succes: 'Registered user'});
+			res.status(200).send({succes: 'Registered user'});
 		}
 	});
 })
 
 // General query 
-router.get("/", async (res) => {    
+router.get("/", async (req, res) => {    
 	const user = await User.find()
 	
 	if(user == null){
 		return res.status(400).send({error: 'No users found'});
 	}
 
-	return res.status(200).send(user);
+	res.status(200).send(user);
 });
 
+// Foreign query of user
+router.get('/foreign', async (req, res) => {
+    const user = await User.find();
+
+    if(user == null) {
+        return res.status(400).send({error: 'User not found'});
+    }
+
+    let foreign = []
+
+    for(var i = 0; i < user.length ; i++){          
+        foreign.push(user[i].name)
+    }     
+
+    res.status(200).send(foreign);
+})
 
 // User query for ID
 router.get('/:id', async (req, res)=> {
@@ -61,9 +75,9 @@ router.get('/:id', async (req, res)=> {
 })
 
 // Updating of user 
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
-	const user = await user.findById(req.params._id );
+	const user = await User.findById(req.params._id );
 
     if(user == null) {
         return res.status(400).send({error: 'User not found'});
@@ -77,21 +91,21 @@ router.put('/:id', async (req, res) => {
     
     const validation = await User.findOne({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'User with the same name already exists'});
     }
 
     const newUser = {  name, password, email, type, company, office, gender, birth };
 
-    await User.findByIdAndUpdate(req.params.id, newUser);    
+    await User.findByIdAndUpdate(req.params._id, newUser);    
 
     res.status(200).send({status:'Updated user'});
 })
 
 // Deleting of user
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
-    const user = await user.findById(req.params._id );
+    const user = await User.findById(req.params._id );
 
     if(user == null) {
         return res.status(400).send({error: 'User not found'});

@@ -29,7 +29,7 @@ router.post('/add', async (req, res) => {
 })
 
 // General query of office
-router.get('/', async (res) => {
+router.get('/', async (req, res) => {
     const office = await Office.find();
     
     if(office == null) {
@@ -39,19 +39,37 @@ router.get('/', async (res) => {
     return res.status(200).send(office);
 })
 
-// Office query for ID
-router.get('/:id', async (req, res)=> {
-    const office = await Office.findById(req.params.id );
+// Foreign query of office
+router.get('/foreign', async (req, res) => {
+    const office = await Office.find();
 
     if(office == null) {
         return res.status(400).send({error: 'Office not found'});
     }
 
-    return res.status(200).send(office);
+    let foreign = []
+
+    for(var i = 0; i < office.length ; i++){          
+        foreign.push(office[i].name)
+    }     
+
+    res.status(200).send(foreign);
+})
+
+
+// Office query for ID
+router.get('/:_id', async (req, res)=> {
+    const office = await Office.findById(req.params._id );
+
+    if(office == null) {
+        return res.status(400).send({error: 'Office not found'});
+    }
+
+    res.status(200).send(office);
 })
 
 // Updating of office
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const office = await Office.findById(req.params._id );
 
@@ -59,19 +77,19 @@ router.put('/:id', async (req, res) => {
         return res.status(400).send({error: 'Office not found'});
     }    
 
-    const { name } = req.body; 
+    const { name, department } = req.body; 
 
-    if(name == '') {
+    if(name == '' || department == '') {
 		return res.status(400).send({ error: 'Some blank attribute'})
-    }   
+    }
 
-    const validation = await Office.findOne({name: name});    
+    const validation = await Office.findOne({name: name});
 
-	if(validation !== null) {
-		return res.status(400).send({error: 'Office with the same name already exists'});
-    } 
+    if(validation.length > 1) {
+        return res.status(400).send({error: 'It is not possible to add office, as there is a record with the same name'});
+    }
 
-    const newOffice = { name };
+    const newOffice = { name, department };
 
     await Office.findByIdAndUpdate(req.params._id, newOffice);    
 
@@ -79,7 +97,7 @@ router.put('/:id', async (req, res) => {
 })
 
 // Deleting of office
-router.delete('/:id', async (res) => {
+router.delete('/:_id', async (req, res) => {
 
     const office = await Office.findById(req.params._id );
 

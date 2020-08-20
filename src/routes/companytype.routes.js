@@ -26,7 +26,7 @@ router.post('/add', async (req, res) => {
 })
 
 // CompanyType query for ID
-router.get('/:id', async (req, res)=> {
+router.get('/:_id', async (req, res)=> {
     const companytype = await CompanyType.findById(req.params._id );
 
     if(companytype == null) {
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res)=> {
 
 
 // Updating of companytype
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const companytype = await CompanyType.findById(req.params._id );
 
@@ -55,19 +55,19 @@ router.put('/:id', async (req, res) => {
 
     const validation = await CompanyType.findOne({company: company, contenttype: contenttype});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'This relationship already exists'});
     }
 
     const newCompanyType = { company, contenttype };
 
-    await CompanyType.findByIdAndUpdate(req.params.id, newCompanyType);    
+    await CompanyType.findByIdAndUpdate(req.params._id, newCompanyType);    
 
     res.status(200).send({status:'Updated companytype'});
 })
 
 // Deleting of companytype
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const companytype = await CompanyType.findById(req.params._id);
 

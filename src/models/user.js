@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     company: { type: String },
 	office: { type: String },
 	gender: { type: Number },
-	birth: {type: Date }
+	birth: {type: String }
 });
 
 UserSchema.plugin(uniqueValidator);

@@ -23,12 +23,41 @@ router.post('/add', async (req, res) => {
     })
     await contenttype.save();
 
-    res.status(201).send({status:'Saved adress'});
+    res.status(201).send({status:'Saved contentType'});
+})
+
+
+// Geral query of contenttype
+router.get('/', async (req, res)=> {
+    const contenttype = await ContentType.find();
+
+    if(contenttype == null) {
+        return res.status(400).send({error: 'ContentType not found'});
+    }
+
+    res.status(200).send(contenttype);
+})
+
+// Foreign query of contenttype
+router.get('/foreign', async (req, res) => {
+    const contenttype = await ContentType.find();
+
+    if(contenttype == null) {
+        return res.status(400).send({error: 'ContentType not found'});
+    }
+
+    let foreign = []
+
+    for(var i = 0; i < contenttype.length ; i++){          
+        foreign.push(contenttype[i].name)
+    }     
+
+    res.status(200).send(foreign);
 })
 
 
 // ContentType query for ID
-router.get('/:id', async (req, res)=> {
+router.get('/:_id', async (req, res)=> {
     const contenttype = await ContentType.findById(req.params._id );
 
     if(contenttype == null) {
@@ -39,7 +68,7 @@ router.get('/:id', async (req, res)=> {
 })
 
 // Updating of contenttype
-router.put('/:id', async (req, res) => {
+router.put('/:_id', async (req, res) => {
 
     const contenttype = await ContentType.findById(req.params._id );
 
@@ -55,19 +84,19 @@ router.put('/:id', async (req, res) => {
     
     const validation = await ContentType.findOne({name: name});    
 
-	if(validation !== null) {
+	if(validation.length > 1) {
 		return res.status(400).send({error: 'Name in use'});
     }
 
-    const newContentType = { name, email, telephone, company };
+    const newContentType = { name };
 
-    await ContentType.findByIdAndUpdate(req.params.id, newContentType);    
+    await ContentType.findByIdAndUpdate(req.params._id, newContentType);    
 
     res.status(200).send({status:'Updated contenttype'});
 })
 
 // Deleting of contenttype
-router.delete('/:id', async (req, res) => {
+router.delete('/:_id', async (req, res) => {
 
     const contenttype = await ContentType.findById(req.params._id);
 
