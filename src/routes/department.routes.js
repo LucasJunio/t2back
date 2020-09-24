@@ -83,7 +83,7 @@ router.put('/:_id', async (req, res) => {
     
     const validation = await Department.findOne({name: name});    
 
-	if(validation.length > 1) {
+	if(validation) {
 		return res.status(400).send({error: 'Department with the same name already exists'});
     } 
 

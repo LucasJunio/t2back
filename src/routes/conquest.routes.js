@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Conquest = require('../models/conquest');
-
+const UserConquest = require('../models/userconquest');
 
 // Creating of conquest
 router.post('/add', async (req, res) => {
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res)=> {
 // Updating of conquest
 router.put('/:id', async (req, res) => {
     
-    const conquest = await Conquest.findById(req.params._id );
+    const conquest = await Conquest.findById(req.params.id );
 
     if(conquest == null) {
         return res.status(400).send({error: 'Conquest not found'});
@@ -79,20 +79,19 @@ router.put('/:id', async (req, res) => {
 // Deleting of conquest
 router.delete('/:id', async (req, res) => {
 
-    const conquest = await Conquest.findById(req.params._id );
+    const conquest = await Conquest.findById(req.params.id );
 
     if(conquest == null) {
         return res.status(400).send({error: 'Conquest not found'});
     }
 
-    const userconquest = await UserConquest.findOne({ conquest: req.params._id });
+    const userconquest = await UserConquest.findOne({ conquest: req.params.id });
 
     if(userconquest !== null) {
         return res.status(400).send({error: 'You cannot delete a conquest because there is a userconquest using it'});
     }
 
-
-    await Conquest.findByIdAndDelete(req.params._id);
+    await Conquest.findByIdAndDelete(req.params.id);
     return res.status(200).send({status:'Deleted conquest'});
 
 })

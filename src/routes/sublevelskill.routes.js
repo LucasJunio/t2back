@@ -14,11 +14,11 @@ router.post('/add', async (req, res) => {
     const validation = await SublevelSkill.findOne({sublevel: sublevel, skill: skill});   
 
 	if(validation !== null) {
-		return res.status(400).send({error: 'There is already a relationship between these entities'});
+		return res.status(400).send({error: 'There is already a relationship between these entities: '+validation});
     } 
 
     const sublevelskill = new SublevelSkill({
-        user, conquest
+        sublevel, skill
     })
     await sublevelskill.save();
     res.status(201).send({status:'Saved sublevelskill'});
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
         return res.status(400).send({error: 'SublevelSkill not found'});
     }
 
-    res.status(200).send(SublevelSkill);
+    res.status(200).send(sublevelskill);
 })
 
 // SublevelSkill query for ID

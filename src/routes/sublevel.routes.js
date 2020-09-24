@@ -38,6 +38,24 @@ router.get('/', async (req, res) => {
     res.status(200).send(sublevel);
 })
 
+// Foreign query of sublevel
+router.get('/foreign', async (req, res) => {
+    const sublevel = await Sublevel.find();
+
+    if(sublevel == null) {
+        return res.status(400).send({error: 'Sublevel not found'});
+    }
+
+    let foreign = []
+
+    for(var i = 0; i < sublevel.length ; i++){          
+        foreign.push(sublevel[i].name)
+    }     
+
+    res.status(200).send(foreign);
+})
+
+
 // Sublevel query for ID
 router.get('/:id', async (req, res)=> {
     const sublevel = await Sublevel.findById(req.params.id );
@@ -70,11 +88,11 @@ router.put('/:id', async (req, res) => {
 		return res.status(400).send({error: 'Conquest with the same name already exists'});
     } 
 
-    const newSublevel = { name, type, punctuation };
+    const newSublevel = { name, quadrant };
 
     await Sublevel.findByIdAndUpdate(req.params.id, newSublevel);    
 
-    res.status(200).send({status:'Sublevel conquest'});
+    res.status(200).send({status:'Sublevel update'});
 
 })
 
@@ -88,20 +106,20 @@ router.delete('/:id', async (req, res) => {
     }
 
 
-    const sublevelskill = await SublevelSkill.findOne({ conquest: req.params._id });
+    const sublevelskill = await SublevelSkill.findOne({ conquest: req.params.id });
 
     if(sublevelskill !== null) {
         return res.status(400).send({error: 'You cannot delete a sublevel because there is a sublevelskill using it'});
     }
     
-    const skillusersublevel = await SkillUserSublevel.findOne({ conquest: req.params._id });
+    const skillusersublevel = await SkillUserSublevel.findOne({ conquest: req.params.id });
 
     if(skillusersublevel !== null) {
         return res.status(400).send({error: 'You cannot delete a sublevel because there is a skillusersublevel using it'});
     }
 
 
-    await Sublevel.findByIdAndDelete(req.params._id);
+    await Sublevel.findByIdAndDelete(req.params.id);
     return res.status(200).send({status:'Deleted conquest'});
 
 })

@@ -10,6 +10,8 @@ router.post('/add', async (req, res) => {
 
     const { name, state_registration, cpf, cnpj, moderation, user, adress, segment } = req.body; 
 
+    console.log(req.body)
+
     if(name == '' || moderation == '' || user == '' || adress == '' || segment == '') {
 		return res.status(400).send({ error: 'Some blank attribute'})
     }
@@ -25,6 +27,25 @@ router.post('/add', async (req, res) => {
 
     res.status(201).send({status:'Saved company'});
 })
+// router.post('/add', async (req, res) => {
+
+//     const { name, adress} = req.body; 
+
+//     // if(name == '' || moderation == '' || user == '' || adress == '' || segment == '') {
+// 	// 	return res.status(400).send({ error: 'Some blank attribute'})
+//     // }
+    
+//     // const validation = await Company.findOne({name: name});    
+
+// 	// if(validation !== null) {
+// 	// 	return res.status(400).send({error: 'Company with the same name already exists'});
+//     // } 
+
+//     const company = new Company({ name, adress: [{postal_code: adress.postal_code, public_place: adress.public_place}] })
+//     await company.save();
+
+//     res.status(201).send({status:'Saved company'});
+// })
 
 
 // Geral query company
@@ -39,8 +60,8 @@ router.get('/', async (req, res)=> {
 })
 
 // Company query for ID
-router.get('/:_id', async (req, res)=> {
-    const company = await Company.findById(req.params._id );
+router.get('/:id', async (req, res)=> {
+    const company = await Company.findById(req.params.id );
 
     if(company == null) {
         return res.status(400).send({error: 'Company not found'});
@@ -50,9 +71,9 @@ router.get('/:_id', async (req, res)=> {
 })
 
 // Updating of company
-router.put('/:_id', async (req, res) => {
+router.put('/:id', async (req, res) => {
 
-    const company = await Company.findById(req.params._id );
+    const company = await Company.findById(req.params.id );
 
     if(company == null) {
         return res.status(400).send({error: 'Company not found'});
@@ -73,15 +94,15 @@ router.put('/:_id', async (req, res) => {
 
     const newCompany = { name, state_registration, cpf, cnpj, moderation, user, adress, segment };
 
-    await Company.findByIdAndUpdate(req.params._id, newCompany);    
+    await Company.findByIdAndUpdate(req.params.id, newCompany);    
 
     res.status(200).send({status:'Updated company'});
 })
 
 // Deleting of company
-router.delete('/:_id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
 
-    const company = await Company.findById(req.params._id);
+    const company = await Company.findById(req.params.id);
 
     if(company == null) {
         return res.status(400).send({error: 'Company not found'});
@@ -99,7 +120,7 @@ router.delete('/:_id', async (req, res) => {
         return res.status(400).send({error: 'You cannot delete a company because there is a companytype using it'});
     }
 
-    await Company.findByIdAndDelete(req.params._id);
+    await Company.findByIdAndDelete(req.params.id);
     return res.status(200).send({status:'Deleted company'});
 
 })
