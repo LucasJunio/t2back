@@ -26,6 +26,7 @@ router.post('/add', async (req, res) => {
 
 })
 
+
 // General query 
 router.get("/", async (req, res) => {    
 	const user = await User.find()
