@@ -1,19 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const User = require('../models/user');
-const Company = require('../models/company');
-const UserInterest = require('../models/userinterest');
-const ResultProfile = require('../models/resultprofile');
-const SkillUserSublevel = require('../models/skillusersublevel');
-const UserConquest = require('../models/userconquest');
 
 
 // User create
 router.post('/add', async (req, res) => {
 
-	const { name, password, email, type, company, office, gender, birth } = req.body;
+	const { name, password, email, telephone, cpf } = req.body;
 
-	if(name == '' || password == '' || email == '' || type == undefined) {
+	if(name == '' || password == '' || email == '' || telephone == '' || cpf == '') {
 		return res.status(400).send({error: 'Some blank attribute'});
 	}
 
@@ -23,7 +18,7 @@ router.post('/add', async (req, res) => {
 		return res.status(400).send({error: 'Email in use'});
     } 
 	
-	let newUser = new User({ name, password, email, type, company, office, gender, birth });
+	let newUser = new User({ name, password, email, telephone, cpf });
 
 	User.createUser(newUser, (err, savedUser) => {
 		if(err){
@@ -65,7 +60,7 @@ router.get('/foreign', async (req, res) => {
 
 // User query for ID
 router.get('/:id', async (req, res)=> {
-    const user = await user.findById(req.params._id );
+    const user = await User.findById(req.params._id );
 
     if(user == null) {
         return res.status(400).send({error: 'User not found'});
@@ -83,9 +78,9 @@ router.put('/:_id', async (req, res) => {
         return res.status(400).send({error: 'User not found'});
     }
 
-    const { name, password, email, type, company, office, gender, birth } = req.body;
+    const { name, password, email, telephone, cpf } = req.body;
 
-	if(name == '' || password == '' || email == '' || type == undefined) {
+	if(name == '' || password == '' || email == '' || telephone == '' || cpf == '') {
 		return res.status(400).send({error: 'Some blank attribute'});
     }       
     
@@ -95,7 +90,7 @@ router.put('/:_id', async (req, res) => {
 		return res.status(400).send({error: 'User with the same name already exists'});
     }
 
-    const newUser = {  name, password, email, type, company, office, gender, birth };
+    const newUser = {  name, password, email, telephone, cpf };
 
     await User.findByIdAndUpdate(req.params._id, newUser);    
 
@@ -109,36 +104,6 @@ router.delete('/:_id', async (req, res) => {
 
     if(user == null) {
         return res.status(400).send({error: 'User not found'});
-    }
-
-    const company = await Company.findOne({ user: req.params._id });
-
-    if(company !== null) {
-        return res.status(400).send({error: 'You cannot delete a user because there is a company using it'});
-    }
-
-	const userinterest = await UserInterest.findOne({ user: req.params._id });
-
-    if(userinterest !== null) {
-        return res.status(400).send({error: 'You cannot delete a user because there is a userinterest using it'});
-	}
-	
-	const resultprofile = await ResultProfile.findOne({ user: req.params._id });
-
-    if(resultprofile !== null) {
-        return res.status(400).send({error: 'You cannot delete a user because there is a resultprofile using it'});
-	}
-	
-	const skillusersublevel	= await SkillUserSublevel.findOne({ user: req.params._id });
-
-    if(skillusersublevel !== null) {
-        return res.status(400).send({error: 'You cannot delete a user because there is a skillusersublevel using it'});
-	}
-	
-	const userconquest	= await UserConquest.findOne({ user: req.params._id });
-
-    if(userconquest !== null) {
-        return res.status(400).send({error: 'You cannot delete a user because there is a userconquest using it'});
     }
 
     await User.findByIdAndDelete(req.params._id);

@@ -9,14 +9,11 @@ const UserSchema = new mongoose.Schema({
 		unique: true,
         lowercase: true
         // Tornar insensitivo à acentuação
-	},
+		},
     password: { type: String, require: true, unique: true, select: false },
     email: {type: String, require: true, unique: true},
-    type: { type: Number, require: true },
-    company: { type: String },
-	office: { type: String },
-	gender: { type: Number },
-	birth: {type: String }
+    telephone: { type: String },
+		cpf: { type: String }
 });
 
 UserSchema.plugin(uniqueValidator);
