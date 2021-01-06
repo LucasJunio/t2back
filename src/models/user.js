@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
         lowercase: true
         // Tornar insensitivo à acentuação
 		},
-    password: { type: String, require: true, unique: true, select: false },
+    password: { type: String, require: true, unique: true },
     email: {type: String, require: true, unique: true},
     telephone: { type: String },
 		cpf: { type: String }

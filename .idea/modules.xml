@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/uptomeback-old.iml" filepath="$PROJECT_DIR$/.idea/uptomeback-old.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/t2back.iml" filepath="$PROJECT_DIR$/.idea/t2back.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../t2front/.idea/t2front.iml" filepath="$PROJECT_DIR$/../t2front/.idea/t2front.iml" />
     </modules>
   </component>
 </project>

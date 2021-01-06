@@ -20,14 +20,10 @@ router.post('/add', async (req, res) => {
 	
 	let newUser = new User({ name, password, email, telephone, cpf });
 
-	User.createUser(newUser, (err, savedUser) => {
-		if(err){
-			res.status(400).send({error: 'There was an error registering user'});
-		} 
-		else {
-			res.status(200).send({succes: 'Registered user'});
-		}
-	});
+  await newUser.save();
+
+  res.status(200).send({succes: 'Registered user'});
+
 })
 
 // General query 
@@ -41,22 +37,6 @@ router.get("/", async (req, res) => {
 	res.status(200).send(user);
 });
 
-// Foreign query of user
-router.get('/foreign', async (req, res) => {
-    const user = await User.find();
-
-    if(user == null) {
-        return res.status(400).send({error: 'User not found'});
-    }
-
-    let foreign = []
-
-    for(var i = 0; i < user.length ; i++){          
-        foreign.push(user[i].name)
-    }     
-
-    res.status(200).send(foreign);
-})
 
 // User query for ID
 router.get('/:id', async (req, res)=> {
@@ -83,12 +63,6 @@ router.put('/:_id', async (req, res) => {
 	if(name == '' || password == '' || email == '' || telephone == '' || cpf == '') {
 		return res.status(400).send({error: 'Some blank attribute'});
     }       
-    
-    const validation = await User.findOne({name: name});    
-
-	if(validation.length > 1) {
-		return res.status(400).send({error: 'User with the same name already exists'});
-    }
 
     const newUser = {  name, password, email, telephone, cpf };
 
@@ -100,6 +74,7 @@ router.put('/:_id', async (req, res) => {
 // Deleting of user
 router.delete('/:_id', async (req, res) => {
 
+  console.log(req.params._id)
     const user = await User.findById(req.params._id );
 
     if(user == null) {
